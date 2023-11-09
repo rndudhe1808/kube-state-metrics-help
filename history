@@ -1,0 +1,32 @@
+git clone https://github.com/kubernetes/kube-state-metrics
+    5  kubectl apply -f kube-state-metrics/examples/standard/
+    6  kubectl get all
+    7  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    8  helm repo updatehelm repo update
+    9  helm repo update
+   10  helm install kube-state-metrics prometheus-community/kube-state-metrics -n kube-system
+   11  kubectl port-forward svc/kube-state-metrics -n kube-system 8080:8080
+   12  helm install kube-state-metrics prometheus-community/kube-state-metrics -n kube-system
+   13  kubectl get pods -n kube-system 
+   14  kubectl get svc -n kube-system 
+   15  kubectl port-forward svc/kube-state-metrics -n kube-system 8080:8080
+   16  vi svc.yaml
+   17  kubectl apply -f svc.yaml # crete new svc to connect via 8080:Nodeport
+   18  kubectl get svc  -n kube-system 
+   22  kubectl port-forward svc/kube-state-metrics -n kube-system 8080:8080 ##curl localhost:8080/metrics
+controlplane $ cat svc.yaml 
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-state-metrics-nodeport
+  namespace: kube-system
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: kube-state-metrics
+
+https://chrisedrego.medium.com/kubernetes-monitoring-kube-state-metrics-df6546aea324
